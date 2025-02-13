@@ -37,7 +37,7 @@ const HeroSection: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
           >
-            Akıllı Mutfak Asistanı
+            Smart Kitchen Assistant
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +45,7 @@ const HeroSection: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-600 mb-8"
           >
-            Malzemelerinizden lezzetli tarifler oluşturun
+            Create delicious recipes from your ingredients
           </motion.p>
           
           <motion.div
