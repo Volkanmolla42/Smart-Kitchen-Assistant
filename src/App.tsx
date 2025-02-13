@@ -1,19 +1,25 @@
-import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { Routes, Route, useRoutes } from 'react-router-dom';
+import { FavoritesProvider } from './context/FavoritesContext';
+import Header from './components/layout/Header';
+import HeroSection from './components/HeroSection';
+import FavoritesPage from './components/favorites/FavoritesPage';
 import Home from "./components/home";
 import routes from "tempo-routes";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
+    <FavoritesProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
         </Routes>
         {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
-    </Suspense>
+      </div>
+    </FavoritesProvider>
   );
-}
+};
 
 export default App;

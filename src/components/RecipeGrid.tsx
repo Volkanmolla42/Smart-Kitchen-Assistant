@@ -1,15 +1,16 @@
 import React from "react";
-import RecipeCard from "./RecipeCard";
+import RecipeCard from "./recipes/RecipeCard";
+import { motion } from "framer-motion";
 
 interface Recipe {
   id: string;
   title: string;
   image: string;
+  ingredients: string[];
+  instructions: string[];
   cookingTime: string;
   cost: number;
   dietaryTags: string[];
-  ingredients: { name: string; amount: string }[];
-  instructions: string[];
 }
 
 interface RecipeGridProps {
@@ -18,44 +19,20 @@ interface RecipeGridProps {
   onRecipeClick?: (recipe: Recipe) => void;
 }
 
-// Calculate recipe cost based on ingredients
-const calculateRecipeCost = (ingredients: { name: string }[]) => {
-  const priceMap = {
-    Quinoa: 3.99,
-    "Sweet Potato": 0.99,
-    Chickpeas: 1.49,
-    Kale: 2.99,
-    Avocado: 1.99,
-    "Salmon fillet": 8.99,
-    Asparagus: 2.99,
-    Lemon: 0.5,
-    "Olive oil": 0.99,
-    Cucumber: 0.99,
-    "Cherry tomatoes": 2.99,
-    Pasta: 1.99,
-    Olives: 2.49,
-    "Feta cheese": 3.99,
-  };
-
-  return ingredients.reduce((total, ingredient) => {
-    return total + (priceMap[ingredient.name] || 1.99);
-  }, 0);
-};
-
 export const defaultRecipes: Recipe[] = [
   {
     id: "1",
     title: "Vegetarian Buddha Bowl",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
     cookingTime: "25 mins",
-    cost: 11.45, // Quinoa + Sweet Potato + Chickpeas + Kale + Avocado
+    cost: 11.45,
     dietaryTags: ["Vegetarian", "Gluten-Free"],
     ingredients: [
-      { name: "Quinoa", amount: "100g" },
-      { name: "Sweet Potato", amount: "1 medium" },
-      { name: "Chickpeas", amount: "1 can" },
-      { name: "Kale", amount: "2 cups" },
-      { name: "Avocado", amount: "1" },
+      "Quinoa (100g)",
+      "Sweet Potato (1 medium)",
+      "Chickpeas (1 can)",
+      "Kale (2 cups)",
+      "Avocado (1)",
     ],
     instructions: [
       "Cook quinoa according to package instructions",
@@ -70,13 +47,13 @@ export const defaultRecipes: Recipe[] = [
     title: "Grilled Salmon with Asparagus",
     image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288",
     cookingTime: "35 mins",
-    cost: 13.47, // Salmon + Asparagus + Lemon + Olive oil
-    dietaryTags: ["Pescatarian", "Keto"],
+    cost: 13.47,
+    dietaryTags: ["Pescatarian", "Keto", "Gluten-Free"],
     ingredients: [
-      { name: "Salmon fillet", amount: "200g" },
-      { name: "Asparagus", amount: "1 bunch" },
-      { name: "Lemon", amount: "1" },
-      { name: "Olive oil", amount: "2 tbsp" },
+      "Salmon fillet (200g)",
+      "Asparagus (1 bunch)",
+      "Lemon (1)",
+      "Olive oil (2 tbsp)",
     ],
     instructions: [
       "Preheat grill to medium-high heat",
@@ -88,79 +65,51 @@ export const defaultRecipes: Recipe[] = [
   },
   {
     id: "3",
-    title: "Quinoa Chickpea Salad",
+    title: "Mediterranean Quinoa Salad",
     image: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38",
     cookingTime: "20 mins",
-    cost: 9.46, // Quinoa + Chickpeas + Cucumber + Cherry tomatoes
-    dietaryTags: ["Vegan", "Gluten-Free"],
+    cost: 9.46,
+    dietaryTags: ["Vegan", "Gluten-Free", "Mediterranean"],
     ingredients: [
-      { name: "Quinoa", amount: "1 cup" },
-      { name: "Chickpeas", amount: "1 can" },
-      { name: "Cucumber", amount: "1" },
-      { name: "Cherry tomatoes", amount: "1 cup" },
+      "Quinoa (1 cup)",
+      "Chickpeas (1 can)",
+      "Cucumber (1)",
+      "Cherry tomatoes (1 cup)",
+      "Red onion (1/2)",
+      "Olives (1/2 cup)",
+      "Fresh parsley",
     ],
     instructions: [
-      "Cook quinoa according to package instructions",
+      "Cook quinoa and let it cool",
+      "Dice cucumber, tomatoes, and onion",
       "Drain and rinse chickpeas",
-      "Dice cucumber and halve tomatoes",
-      "Mix all ingredients with dressing",
-      "Season to taste",
-    ],
-  },
-  {
-    id: "4",
-    title: "Mediterranean Pasta",
-    image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601",
-    cookingTime: "30 mins",
-    cost: 11.46, // Pasta + Cherry tomatoes + Olives + Feta cheese
-    dietaryTags: ["Vegetarian"],
-    ingredients: [
-      { name: "Pasta", amount: "500g" },
-      { name: "Cherry tomatoes", amount: "2 cups" },
-      { name: "Olives", amount: "1/2 cup" },
-      { name: "Feta cheese", amount: "200g" },
-    ],
-    instructions: [
-      "Cook pasta al dente",
-      "Halve tomatoes and olives",
-      "Crumble feta cheese",
-      "Mix all ingredients",
-      "Drizzle with olive oil",
+      "Combine all ingredients",
+      "Dress with olive oil and lemon juice",
     ],
   },
 ];
 
-const RecipeGrid = ({
+const RecipeGrid: React.FC<RecipeGridProps> = ({
   recipes = defaultRecipes,
   onAddToList = (recipeId) => console.log(`Add recipe ${recipeId} to list`),
   onRecipeClick = (recipe) => console.log(`Recipe clicked: ${recipe.title}`),
-}: RecipeGridProps) => {
+}) => {
   return (
-    <div className="w-full min-h-[600px] bg-gray-50 p-8">
-      {recipes.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">
-            No recipes found. Try adding more ingredients or adjusting your
-            preferences.
-          </p>
-        </div>
-      )}
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
-          {recipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              title={recipe.title}
-              image={recipe.image}
-              cookingTime={recipe.cookingTime}
-              cost={recipe.cost}
-              dietaryTags={recipe.dietaryTags}
-              onAddToList={() => onAddToList(recipe.id)}
-              onClick={() => onRecipeClick(recipe)}
-            />
-          ))}
-        </div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      {recipes.map((recipe) => (
+        <motion.div
+          key={recipe.id}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <RecipeCard
+            {...recipe}
+            onAddToList={() => onAddToList(recipe.id)}
+            onClick={() => onRecipeClick(recipe)}
+          />
+        </motion.div>
+      ))}
     </div>
   );
 };
